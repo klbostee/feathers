@@ -1,0 +1,13 @@
+This project gathers "magical" feathers that give Dumbo the confidence he needs 
+to be able to fly. More precisely, it consists of Java classes that can be very 
+useful for Dumbo (http://last.fm/dumbo) programs that run on Hadoop Streaming.
+
+
+BUILDING FEATHERS
+
+Run "sh build.sh".
+
+
+USING FEATHERS
+
+Add the option "-libjar feathers.jar" to your dumbo command.
