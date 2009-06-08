@@ -19,6 +19,7 @@
 package fm.last.feathers.map;
 
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapred.*;
@@ -28,17 +29,20 @@ public class Words extends MapReduceBase
   implements Mapper<LongWritable, Text,
                     TypedBytesWritable, TypedBytesWritable> {
 
-  private final TypedBytesWritable one = new TypedBytesWritable();
-  private final TypedBytesWritable word = new TypedBytesWritable();
-
-  public void configure(JobConf conf) {
-    one.setValue(1);
+  private final static Pattern pattern;
+  private final static TypedBytesWritable one = new TypedBytesWritable();
+  
+  static {
+    pattern = Pattern.compile(" ");
+    one.setValue(1);    
   }
+  
+  private final TypedBytesWritable word = new TypedBytesWritable();
 
   public void map(LongWritable key, Text value, 
                   OutputCollector<TypedBytesWritable, TypedBytesWritable> output, 
                   Reporter reporter) throws IOException {
-    for (String str : value.toString().split(" ")) {
+    for (String str : pattern.split(value.toString())) {
       word.setValue(str);
       output.collect(word, one);
     }
