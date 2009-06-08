@@ -29,16 +29,16 @@ public class Words extends MapReduceBase
   implements Mapper<LongWritable, Text,
                     TypedBytesWritable, TypedBytesWritable> {
 
-  private final static Pattern pattern;
-  private final static TypedBytesWritable one = new TypedBytesWritable();
+  private final TypedBytesWritable one = new TypedBytesWritable();
+  private final TypedBytesWritable word = new TypedBytesWritable();  
+
+  private Pattern pattern;
   
-  static {
-    pattern = Pattern.compile(" ");
+  public void configure(JobConf conf) {
     one.setValue(1);    
+    pattern = Pattern.compile(" ");
   }
   
-  private final TypedBytesWritable word = new TypedBytesWritable();
-
   public void map(LongWritable key, Text value, 
                   OutputCollector<TypedBytesWritable, TypedBytesWritable> output, 
                   Reporter reporter) throws IOException {
