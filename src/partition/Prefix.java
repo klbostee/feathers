@@ -26,11 +26,13 @@ import org.apache.hadoop.typedbytes.TypedBytesWritable;
 public class Prefix 
   extends HashPartitioner<TypedBytesWritable, TypedBytesWritable> {
 
+  private final TypedBytesWritable partKey = new TypedBytesWritable();
+
   public int getPartition(TypedBytesWritable key,
                           TypedBytesWritable value,
                           int numPartitions) {
-    key.setValue(((ArrayList) key.getValue()).get(0));
-    return super.getPartition(key, value, numPartitions);
+    partKey.setValue(((ArrayList) key.getValue()).get(0));
+    return super.getPartition(partKey, value, numPartitions);
   }
 
 }
