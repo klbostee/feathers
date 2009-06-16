@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package fm.last.feathers.partition.Prefix;
+package fm.last.feathers.partition;
 
 import java.util.ArrayList;
 
