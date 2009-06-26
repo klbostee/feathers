@@ -51,6 +51,7 @@ public class IndexedRawTypedBytes extends RawTypedBytes {
       indexTbOut = new TypedBytesOutput(indexOut);
     }
 
+    @Override
     public synchronized void 
       write(TypedBytesWritable key, 
             TypedBytesWritable value) throws IOException {
@@ -72,13 +73,14 @@ public class IndexedRawTypedBytes extends RawTypedBytes {
     }
   }
 
+  @Override
   public RecordWriter<TypedBytesWritable, TypedBytesWritable> 
     getRecordWriter(FileSystem ignored,
                     JobConf job,
                     String name,
                     Progressable progress) throws IOException {
     Path file = FileOutputFormat.getTaskOutputPath(job, name);
-    Path index = new Path(file.getParent().suffix("_idxs"), file.getName());
+    Path index = file.suffix("-index");
     FileSystem fs = file.getFileSystem(job);
     FSDataOutputStream fileOut = fs.create(file, progress);
     FSDataOutputStream indexOut = fs.create(index);
