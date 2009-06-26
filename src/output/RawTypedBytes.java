@@ -46,8 +46,8 @@ public class RawTypedBytes
     public synchronized void 
       write(TypedBytesWritable key, 
             TypedBytesWritable value) throws IOException {
-      out.write(key.getBytes(), 0, key.getLength());
-      out.write(value.getBytes(), 0, value.getLength());
+      out.write(key.get(), 0, key.getSize());
+      out.write(value.get(), 0, value.getSize());
     }
 
     public synchronized void close(Reporter reporter) throws IOException {

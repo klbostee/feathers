@@ -56,15 +56,15 @@ public class IndexedRawTypedBytes extends RawTypedBytes {
       write(TypedBytesWritable key, 
             TypedBytesWritable value) throws IOException {
       super.write(key, value);
-      int keyLength = key.getLength();
+      int keyLength = key.getSize();
       byte[] keyBytes = new byte[keyLength];
-      System.arraycopy(key.getBytes(), 0, keyBytes, 0, keyLength);
+      System.arraycopy(key.get(), 0, keyBytes, 0, keyLength);
       if (!Arrays.equals(prevKey, keyBytes)) {
         indexOut.write(keyBytes);
         indexTbOut.writeLong(written);
       }
       prevKey = keyBytes;
-      written += keyLength + value.getLength();
+      written += keyLength + value.getSize();
     }
 
     public synchronized void close(Reporter reporter) throws IOException {
