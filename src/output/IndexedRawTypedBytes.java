@@ -1,0 +1,87 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package fm.last.feathers.output;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
+
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.fs.FSDataOutputStream;
+import org.apache.hadoop.mapred.FileOutputFormat;
+import org.apache.hadoop.mapred.JobConf;
+import org.apache.hadoop.mapred.RecordWriter;
+import org.apache.hadoop.mapred.Reporter;
+import org.apache.hadoop.typedbytes.TypedBytesOutput;
+import org.apache.hadoop.typedbytes.TypedBytesWritable;
+import org.apache.hadoop.util.*;
+
+public class IndexedRawTypedBytes extends RawTypedBytes {
+
+  protected static class IndexingPairWriter
+    extends RawTypedBytes.PairWriter {
+
+    private DataOutputStream indexOut;
+    private TypedBytesOutput indexTbOut;
+    
+    private byte[] prevKey = new byte[0];
+    private long written = 0;
+
+    public IndexingPairWriter(DataOutputStream out, 
+                              DataOutputStream indexOut) {
+      super(out);
+      this.indexOut = indexOut;
+      indexTbOut = new TypedBytesOutput(indexOut);
+    }
+
+    public synchronized void 
+      write(TypedBytesWritable key, 
+            TypedBytesWritable value) throws IOException {
+      super.write(key, value);
+      int keyLength = key.getLength();
+      byte[] keyBytes = new byte[keyLength];
+      System.arraycopy(key.getBytes(), 0, keyBytes, 0, keyLength);
+      if (!Arrays.equals(prevKey, keyBytes)) {
+        indexOut.write(keyBytes);
+        indexTbOut.writeLong(written);
+      }
+      prevKey = keyBytes;
+      written += keyLength + value.getLength();
+    }
+
+    public synchronized void close(Reporter reporter) throws IOException {
+      super.close(reporter);
+      indexOut.close();
+    }
+  }
+
+  public RecordWriter<TypedBytesWritable, TypedBytesWritable> 
+    getRecordWriter(FileSystem ignored,
+                    JobConf job,
+                    String name,
+                    Progressable progress) throws IOException {
+    Path file = FileOutputFormat.getTaskOutputPath(job, name);
+    Path index = new Path(file.getParent().suffix("_idxs"), file.getName());
+    FileSystem fs = file.getFileSystem(job);
+    FSDataOutputStream fileOut = fs.create(file, progress);
+    FSDataOutputStream indexOut = fs.create(index);
+    return new IndexingPairWriter(fileOut, indexOut);
+  }
+}
