@@ -31,7 +31,7 @@ import org.apache.hadoop.mapred.Reporter;
 import org.apache.hadoop.typedbytes.TypedBytesWritable;
 import org.apache.hadoop.util.*;
 
-public class RawTypedBytes
+public class PlainTypedBytes
   extends FileOutputFormat<TypedBytesWritable, TypedBytesWritable> {
 
   protected static class PairWriter

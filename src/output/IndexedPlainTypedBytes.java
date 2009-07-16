@@ -33,10 +33,10 @@ import org.apache.hadoop.typedbytes.TypedBytesOutput;
 import org.apache.hadoop.typedbytes.TypedBytesWritable;
 import org.apache.hadoop.util.*;
 
-public class IndexedRawTypedBytes extends RawTypedBytes {
+public class IndexedPlainTypedBytes extends PlainTypedBytes {
 
   protected static class IndexingPairWriter
-    extends RawTypedBytes.PairWriter {
+    extends PlainTypedBytes.PairWriter {
 
     private DataOutputStream indexOut;
     private TypedBytesOutput indexTbOut;
