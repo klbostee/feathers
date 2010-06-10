@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="feathers" default="main">
+    <description>
+        This project gathers "magical" feathers that give Dumbo the confidence 
+        he needs to be able to fly. More precisely, it consists of Java classes 
+        that can be very useful for Dumbo (http://last.fm/dumbo) programs that 
+        run on Hadoop Streaming.
+    </description>
+
+    <property environment="env"/>
+    <property name="version" value="1.0" />
+    <property name="hadoop.home" location="/usr/lib/hadoop"/>
+
+    <property name="src.dir"     value="src"/>
+    <property name="build.dir"   value="build"/>
+    <property name="classes.dir" value="${build.dir}/classes"/>
+    <property name="jar.dir"     value="dist"/>
+
+    <path id="feathers.classpath">
+        <fileset dir="${hadoop.home}" includes="hadoop*-core.jar"/>
+        <fileset dir="${hadoop.home}" 
+                 includes="contrib/streaming/hadoop-*-streaming.jar" />
+    </path>
+
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="${jar.dir}"/>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="${classes.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" 
+               classpathref="feathers.classpath"/>
+    </target>
+
+    <target name="jar" depends="compile">
+        <mkdir dir="${jar.dir}"/>
+        <jar destfile="${jar.dir}/${ant.project.name}.jar" 
+             basedir="${classes.dir}">
+
+            <!-- define MANIFEST.MF -->
+            <manifest>
+                <attribute name="Built-By" value="${ant.project.name}" />
+                <attribute name="Created-By" value="${ant.project.name}" />
+                <attribute name="Implementation-Version" 
+                           value="${version}" />
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="main" depends="clean,jar"/>
+
+</project>

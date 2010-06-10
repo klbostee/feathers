@@ -7,6 +7,8 @@ BUILDING FEATHERS
 
 Run "sh build.sh".
 
+If you want to build feathers with ant, just run "ant". The library is created
+under the dist directory on feathers basedir.
 
 USING FEATHERS
 
