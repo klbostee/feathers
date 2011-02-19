@@ -35,25 +35,23 @@ import fm.last.feathers.output.RawFileOutputFormat;
  * to different output files in raw file output format.
  */
 public class MultipleRawFileOutputFormat <K,V>
-extends MultipleOutputFormat<K, V> {
+  extends MultipleOutputFormat<K, V> {
 
-    private RawFileOutputFormat<K,V> theRawFileOutputFormat = null;
+  private RawFileOutputFormat<K,V> theRawFileOutputFormat = null;
 
-    @Override
-    protected RecordWriter<K, V> getBaseRecordWriter(FileSystem fs,
+  @Override
+  protected RecordWriter<K, V> getBaseRecordWriter(FileSystem fs,
                                                    JobConf job,
                                                    String name,
                                                    Progressable arg3)
-    throws IOException {
-        if (theRawFileOutputFormat == null) {
-            theRawFileOutputFormat = new RawFileOutputFormat<K,V>();
-        }
-        return theRawFileOutputFormat.getRecordWriter(fs, job, name, arg3);
-    }
-
-  protected String generateFileNameForKeyValue(K key, V value, String name) {
-    return new Path(key.toString(), name).toString() ;
+  throws IOException {
+    if (this.theRawFileOutputFormat == null)
+      this.theRawFileOutputFormat = new RawFileOutputFormat<K, V>();
+    return this.theRawFileOutputFormat.getRecordWriter(fs, job, name, arg3);
   }
 
+  @Override
+  protected String generateFileNameForKeyValue(K key, V value, String name) {
+    return new Path(key.toString(), name).toString();
+  }
 }
-
