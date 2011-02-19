@@ -54,4 +54,11 @@ public class MultipleRawFileOutputFormat <K,V>
   protected String generateFileNameForKeyValue(K key, V value, String name) {
     return new Path(key.toString(), name).toString();
   }
+
+  @Override
+  protected String getInputFileBasedOutputFileName(JobConf job, String name) {
+    if (job.getBoolean("feathers.output.filename.strippart", false))
+      name = new Path(name).getParent().toString();
+    return super.getInputFileBasedOutputFileName(job, name);
+  }
 }
