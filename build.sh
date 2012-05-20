@@ -5,6 +5,10 @@ HADOOP_HOME="/usr/lib/hadoop"
 HADOOP_JAR="`echo $HADOOP_HOME/hadoop-*-core.jar`"
 STREAMING_JAR="`echo $HADOOP_HOME/contrib/streaming/hadoop-*-streaming.jar`"
 
+if STREAMING_JAR==""; then
+    STREAMING_JAR="`echo $HADOOP_HOME/contrib/streaming/hadoop-streaming-*.jar`"
+fi
+
 rm -rf classes 2> /dev/null
 rm feathers.jar 2> /dev/null
 if test "$1" = clean; then exit; fi
